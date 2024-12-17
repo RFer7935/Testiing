@@ -1,0 +1,677 @@
+/* Root variables and basic setup */
+:root {
+  --primary-color: #00cdff;
+  --hover-color: #1896b5;
+  --dark-bg: #343a40;
+  --text-light: #fff;
+  --text-dark: #000;
+}
+
+/* Base styles */
+html,
+body {
+  scroll-behavior: smooth;
+  scroll-padding-top: 60px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Styles */
+.thin-header {
+  height: 5px;
+  background-color: var(--primary-color);
+}
+
+.header {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+/* Section Styles */
+.content-section {
+  margin-bottom: 50px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Navbar Styles */
+.navbar-lightblue {
+  background-color: #ffff !important;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.navbar-lightblue .navbar-nav .nav-link {
+  color: #808080 !important;
+  font-weight: bold;
+}
+
+.navbar-lightblue .navbar-nav .nav-link:hover {
+  color: #1896b5 !important;
+}
+
+.navbar-lightblue .navbar-brand {
+  color: #808080 !important;
+  font-weight: normal;
+}
+
+.navbar-lightblue .navbar-brand:hover {
+  color: #1896b5 !important;
+}
+
+.navbar-brand img {
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand img:hover {
+  transform: scale(1.1);
+}
+
+.navbar-nav {
+  justify-content: center;
+  width: 100%;
+}
+
+.navbar-nav .nav-item {
+  margin-right: 20px; /* Adjust the value as needed */
+}
+
+
+/* Hero Section */
+.bg {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.background1::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.521); /* Adjust the opacity as needed */
+  z-index: 2;
+}
+
+.centered-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 3; /* Ensure this is above the overlay */
+  color: var(--text-light);
+}
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Facilities Section */
+.event {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.underline {
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-color);
+  margin: 1rem auto;
+}
+
+
+/* Price Section Styling */
+.price-highlight {
+  position: relative;
+  padding: 2rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.price-title {
+  color: #333;
+  font-weight: 700;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  animation: fadeInDown 1s ease-out;
+}
+
+.price-amount {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+  animation: pulse 2s infinite;
+}
+
+.price-tag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ff4444;
+  color: white;
+  padding: 0.5rem 3rem;
+  transform: rotate(45deg) translateX(30%) translateY(-10%);
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Gallery Section */
+#galeri {
+  padding: 60px 0;
+}
+
+#galeri h1 {
+  margin-bottom: 40px;
+}
+
+#galeri .img-fluid {
+  margin-bottom: 20px;
+}
+
+.embed-responsive {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.embed-responsive::before {
+  content: "";
+  display: block;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.embed-responsive .embed-responsive-item {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Reviews Section */
+#reviews {
+  padding: 60px 0;
+}
+
+#reviews h2 {
+  margin-bottom: 40px;
+}
+
+.review {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review h4 {
+  margin-bottom: 10px;
+}
+
+.review p.text-muted {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.review p {
+  margin-bottom: 0;
+}
+
+.blue-star {
+  color: #00cdff; /* Adjust the color as needed */
+}
+
+.rounded {
+  border-radius: 8px;
+}
+
+/* Location Section */
+.lokasi-section {
+  padding: 80px 0;
+  background-color: #f8f9fa;
+}
+
+.map-wrapper {
+  margin-top: 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.map-frame {
+  border: 0;
+  width: 100%;
+  height: 400px;
+}
+
+
+/* Card Styles */
+.card {
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--hover-color);
+  border-color: var(--hover-color);
+}
+
+.custom-size {
+  max-width: 300px; /* Adjust the value as needed */
+  margin: auto; /* Center the image horizontally */
+  margin-left: 150px; /* Move the image slightly to the right */
+}
+
+/* Footer Styles */
+.footer {
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  padding: 2rem 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .navbar-nav {
+    padding: 0.5rem 0;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0;
+  }
+
+  .login-btn {
+    margin: 0.5rem 0;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .navbar-nav .nav-item {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-wrapper {
+    margin: 20px -15px;
+  }
+
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .login-btn {
+    margin: 10px auto;
+    display: inline-block;
+  }
+
+  section {
+    padding: 3rem 0;
+  }
+
+  .card-img-top {
+    height: 180px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .event {
+    font-size: 1.25rem;
+  }
+
+  .card-img-top {
+    height: 160px;
+  }
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: rotate(45deg) translateX(100%) translateY(-10%);
+  }
+  to {
+    transform: rotate(45deg) translateX(30%) translateY(-10%);
+  }
+}
+
+/* Hover Effects */
+.price-highlight:hover .price-amount {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .price-title {
+    font-size: 2rem;
+  }
+
+  .price-amount {
+    font-size: 2.8rem;
+  }
+
+  .price-tag {
+    padding: 0.3rem 2rem;
+  }
+}
+
+/* Reviews Section */
+#reviews {
+  padding: 60px 0;
+}
+
+#reviews h2 {
+  margin-bottom: 40px;
+}
+
+.review {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review h4 {
+  margin-bottom: 10px;
+}
+
+.review p.text-muted {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.review p {
+  margin-bottom: 0;
+}
+
+.blue-star {
+  color: #00cdff; /* Adjust the color as needed */
+}
+
+/* Animation Transitions for Content Swapping */
+.content-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.content-section.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade transitions for sections */
+.fade-transition {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Slide transitions for content swapping */
+.slide-transition {
+  animation: slideIn 0.6s ease-out;
+}
+
+/* Card hover animations */
+.card {
+  transform: translateY(0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Section transition delays */
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.delay-2 {
+  animation-delay: 0.4s;
+}
+
+.delay-3 {
+  animation-delay: 0.6s;
+}
+
+/* Animation classes */
+.content-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.content-section.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-transition {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.slide-transition {
+  animation: slideIn 0.6s ease-out;
+}
+
+/* Delay classes */
+.delay-1 {
+  animation-delay: 0.2s;
+}
+
+.delay-2 {
+  animation-delay: 0.4s;
+}
+
+.delay-3 {
+  animation-delay: 0.6s;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.content-section {
+  opacity: 1; /* Change from 0 to 1 for default visibility */
+  transform: translateY(0);
+  transition: all 0.6s ease-out;
+}
+
+.fade-transition {
+  animation: fadeIn 0.8s ease-in-out;
+  opacity: 1; /* Ensure this is set to 1 */
+}
+
+.content-section {
+  opacity: 1;
+  visibility: visible;
+  will-change: transform, opacity;
+}
+
+.content-section.fade-transition {
+  animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.carousel-image {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+/* Footer Styles */
+.footer {
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  padding: 2rem 0;
+  text-align: center; /* Align all content to the center */
+}
+
+.social-icons {
+  margin-top: 10px;
+  display: inline-flex; /* Align icons horizontally */
+  justify-content: center; /* Center the icons */
+  gap: 15px; /* Add spacing between icons */
+}
+
+.social-icons a {
+  color: var(--text-light); /* Ensure icons have the same color as text */
+  font-size: 1.5rem; /* Adjust the size of the icons */
+  text-decoration: none;
+  transition: color 0.3s ease; /* Add transition for hover effect */
+}
+
+.social-icons a:hover {
+  color: var(--primary-color); /* Change color on hover */
+}
+
+.copyright {
+  margin-top: 20px;
+  font-size: 0.9rem; /* Adjust font size */
+  color: var(--text-light);
+  opacity: 0.7; /* Slightly fade the copyright text */
+}
