@@ -17,6 +17,63 @@ require 'db.php';
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Hero Section */
+        .bg {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .background1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .background1::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 5);
+            /* Adjust the opacity as needed */
+            z-index: 2;
+        }
+
+        /* Untuk judul di dalam modal */
+        .modal-tittle {
+            text-align: center;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Mengatur deskripsi agar tetap di tengah */
+        .modal-description,
+        .card-body p {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Untuk gambar di dalam modal */
+        .modal-image,
+        .card-img-top {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 100%;
+            /* Pastikan gambar tidak melampaui batas kontainer */
+            height: auto;
+            /* Menjaga proporsi gambar */
+        }
+
         .floating-button {
             position: fixed;
             bottom: 20px;
@@ -72,7 +129,8 @@ require 'db.php';
             <div class="centered-container fade-transition">
                 <h1 class="company-name display-4">Wisata Air Panas Wong Pulungan</h1>
                 <h2 class="deskripsion1 lead">Nikmati sensasi air panas yang dilengkapi</h2>
-                <h2 class="deskripsion1 lead">dengan pemandangan gunung penanggungan</h2>
+                <h2 class="deskripsion1 lead">dengan pemandangan Gunung Penanggungan </h2>
+                <h2 class="deskripsion1 lead">yang terletak di Gempol, Pasuruan, Jawa Timur </h2>
                 <a href="#Tentang_Kami" class="btn btn-primary btn-lg mt-3">Lihat Selengkapnya</a>
             </div>
         </div>
@@ -96,18 +154,27 @@ require 'db.php';
                     <div class="col-md-6">
                         <div id="aboutCarousel" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img src="img/bgbg7.jpeg" class="d-block w-100 rounded carousel-image"
-                                        alt="About Image 1">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="img/air_panas.png" class="d-block w-100 rounded carousel-image"
-                                        alt="About Image 2">
-                                </div>
-                                <div class="carousel-item">
-                                    <img src="img/terapi_ikan.png" class="d-block w-100 rounded carousel-image"
-                                        alt="About Image 3">
-                                </div>
+                                <?php
+                                $sql = "SELECT * FROM foto_section";
+                                $result = mysqli_query($conn, $sql);
+                                $active = true;
+
+                                if ($result && mysqli_num_rows($result) > 0) {
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $imagePath = 'admin/uploads/' . $row['image'];
+                                        $src = (!empty($row['image']) && file_exists($imagePath)) ? $imagePath : 'admin/uploads/default-image.jpg';
+                                        $activeClass = $active ? 'active' : '';
+                                        echo "<div class='carousel-item $activeClass'>
+                                                <img src='$src' class='d-block w-100 rounded carousel-image' alt='About Image'>
+                                              </div>";
+                                        $active = false;
+                                    }
+                                } else {
+                                    echo "<div class='carousel-item active'>
+                                            <img src='img/default-image.jpg' class='d-block w-100 rounded carousel-image' alt='Default Image'>
+                                          </div>";
+                                }
+                                ?>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel"
                                 data-bs-slide="prev">
@@ -149,42 +216,61 @@ require 'db.php';
                 <div class="underline mx-auto"></div>
                 <div class="row mt-4">
                     <?php
-                    // Query untuk mengambil data fasilitas
                     $sql = "SELECT * FROM facility_section";
                     $result = mysqli_query($conn, $sql);
 
-                    // Periksa apakah data ada
                     if ($result && mysqli_num_rows($result) > 0) {
                         while ($facility = mysqli_fetch_assoc($result)) {
-                            // Path gambar (folder admin/uploads/)
                             $imagePath = 'admin/uploads/' . $facility['image'];
+                            $src = (!empty($facility['image']) && file_exists($imagePath)) ? $imagePath : 'admin/uploads/default-image.jpg';
 
-                            // Cek apakah file gambar ada di folder
-                            if (!empty($facility['image']) && file_exists($imagePath)) {
-                                $src = $imagePath; // Path gambar valid
-                            } else {
-                                $src = 'admin/uploads/default-image.jpg'; // Gambar default jika tidak ada
-                            }
+                            // Ambil hanya 5 kata pertama dari description
+                            $descriptionWords = explode(" ", $facility['description']);
+                            $shortDescription = implode(" ", array_slice($descriptionWords, 0, 5));
                             ?>
                             <div class="col-md-3 mb-4">
-                                <div class="card h-100">
+                                <div class="card h-100 text-center">
                                     <img src="<?php echo $src; ?>" class="card-img-top"
                                         alt="<?php echo htmlspecialchars($facility['title']); ?>">
-                                    <div class="card-body text-center">
+                                    <div class="card-body">
                                         <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
-                                        <p class="mt-3"><?php echo htmlspecialchars($facility['description']); ?></p>
+                                        <p class="mt-3"><?php echo htmlspecialchars($shortDescription); ?>...</p>
+                                        <!-- Button to trigger modal -->
+                                        <button type="button" class="btn btn-primary open-modal-btn" data-bs-toggle="modal"
+                                            data-bs-target="#facilityModal" data-id="<?php echo $facility['id']; ?>"
+                                            data-title="<?php echo htmlspecialchars($facility['title']); ?>"
+                                            data-image="<?php echo $src; ?>"
+                                            data-description="<?php echo htmlspecialchars($facility['description']); ?>">
+                                            Lihat Selengkapnya
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             <?php
                         }
-                    } else {
-                        echo '<p class="text-center">Data fasilitas tidak tersedia.</p>';
                     }
                     ?>
                 </div>
             </div>
         </section>
+
+        <!-- Facility Modal -->
+        <div class="modal fade" id="facilityModal" tabindex="-1" aria-labelledby="facilityModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="facilityModalLabel">Facility Title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="admin/uploads/default-image.jpg" class="img-fluid mb-3 modal-image"
+                            alt="Facility Image">
+                        <p class="modal-description">Facility description goes here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Gallery Section -->
         <section id="galeri" class="content-section py-5 bg-light">
@@ -216,10 +302,34 @@ require 'db.php';
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/hPU0P4sNyzA"
-                                allowfullscreen></iframe>
-                        </div>
+                        <?php
+                        // Query untuk mengambil URL video dari tabel videogallery_section
+                        $sql = "SELECT * FROM videogallery_section";
+                        $result = mysqli_query($conn, $sql);
+
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            while ($video = mysqli_fetch_assoc($result)) {
+                                $videoURL = $video['video'];
+                                // Check if the URL is a YouTube link or a local file
+                                if (strpos($videoURL, 'youtube.com') !== false) {
+                                    echo "<div class='embed-responsive embed-responsive-16by9 mb-4'>
+                                        <iframe class='embed-responsive-item' src='$videoURL' allowfullscreen></iframe>
+                                      </div>";
+                                } else {
+                                    // Ensure the video path is correct
+                                    $videoPath = 'admin/' . $videoURL;
+                                    echo "<div class='embed-responsive embed-responsive-16by9 mb-4'>
+                                        <video class='embed-responsive-item' controls>
+                                            <source src='$videoPath' type='video/mp4'>
+                                            Your browser does not support the video tag.
+                                        </video>
+                                      </div>";
+                                }
+                            }
+                        } else {
+                            echo "<p>Tidak ada video.</p>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
@@ -242,7 +352,8 @@ require 'db.php';
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <img src="img/Iphone.png" alt="Aplikasi pada handphone" class="img-fluid phone-image custom-size">
+                        <img src="img/Iphone.png" alt="Aplikasi pada handphone"
+                            class="img-fluid phone-image custom-size">
                     </div>
                 </div>
             </div>
@@ -290,8 +401,10 @@ require 'db.php';
                                 <i class="fas fa-star blue-star"></i>
                                 <i class="fas fa-star blue-star"></i>
                             </p>
-                            <p>"Parkir mobil 10rb, tiket masuk pemandian 15rb/orang. Fasilitas kamar mandi/bilas ckup
-                                luas bersih nyaman. Gazebo ckup banyak, kolam pemandian ada 4 , yg paling panas di kolam
+                            <p>"Parkir mobil 10rb, tiket masuk pemandian 15rb/orang. Fasilitas kamar mandi/bilas
+                                ckup
+                                luas bersih nyaman. Gazebo ckup banyak, kolam pemandian ada 4 , yg paling panas di
+                                kolam
                                 tengah."</p>
                         </div>
                     </div>
@@ -319,7 +432,8 @@ require 'db.php';
                                 <i class="fas fa-star blue-star"></i>
                                 <i class="fas fa-star blue-star"></i>
                             </p>
-                            <p>"Lagi gabut+galau... Hang out ke sini saja dengan Ur friends. Dunia masih Indah, U're not
+                            <p>"Lagi gabut+galau... Hang out ke sini saja dengan Ur friends. Dunia masih Indah, U're
+                                not
                                 alone..."</p>
                         </div>
                     </div>
@@ -334,8 +448,10 @@ require 'db.php';
                                 <i class="fas fa-star"></i>
                             </p>
                             <p>"Pemandian air panas Pulungan terletak di tepi jln raya sehingga mudah unt dicari.
-                                Pemandian ini buka sampai jam 11 mlm,tp kata ibu ibu yg berkunjung dia pernah sampai jam
-                                2mlm, HTM 15.000 parkir mobil 10.000. tersedia rumah joglo unt sekedar bersantai atau
+                                Pemandian ini buka sampai jam 11 mlm,tp kata ibu ibu yg berkunjung dia pernah sampai
+                                jam
+                                2mlm, HTM 15.000 parkir mobil 10.000. tersedia rumah joglo unt sekedar bersantai
+                                atau
                                 juga beberapa stand makanan dg konsep lesehan. unt makanan dan minuman harga masih
                                 relatif terjangkau"
                             </p>
@@ -351,24 +467,31 @@ require 'db.php';
                                 <i class="fas fa-star blue-star"></i>
                                 <i class="fas fa-star"></i>
                             </p>
-                            <p>"Tempat mandi air panas yang cukup oke. Buka jam 4 sore. Tempatnya tidak terlalu luas,
-                                kolamnya sekitar 7×7 meter dengan pancuran di tengahnya. Air tidak terlalu panas cocok
-                                untuk berendam santai dengan harga ticket masuk 15.000. Setelah berendam air panas bisa
-                                bilas dengan air dingin di kamar mandi yang telah disediakan. Setelah berendam air panas
-                                bisa mencicipi kuliner yang tersedia di depan gerbang masuk. Tersedia berbagai jualan
+                            <p>"Tempat mandi air panas yang cukup oke. Buka jam 4 sore. Tempatnya tidak terlalu
+                                luas,
+                                kolamnya sekitar 7×7 meter dengan pancuran di tengahnya. Air tidak terlalu panas
+                                cocok
+                                untuk berendam santai dengan harga ticket masuk 15.000. Setelah berendam air panas
+                                bisa
+                                bilas dengan air dingin di kamar mandi yang telah disediakan. Setelah berendam air
+                                panas
+                                bisa mencicipi kuliner yang tersedia di depan gerbang masuk. Tersedia berbagai
+                                jualan
                                 makanan dari lalapan, cemilan seperti cilok, sosis, risol mayo, dan berbagai minuman
-                                seperti wedang jahe, pop ice, es jeruk, dll. Semua warung disini rasa makanannya cukup
-                                oke dengan biaya yang wajar. Kalau malam biasanya ada live music sehingga suasana makan
+                                seperti wedang jahe, pop ice, es jeruk, dll. Semua warung disini rasa makanannya
+                                cukup
+                                oke dengan biaya yang wajar. Kalau malam biasanya ada live music sehingga suasana
+                                makan
                                 jadi lebih nyaman.
 
-                                Parkir : Tersedia parkir yang luas dengan biaya parkir motor : 5.000 dan mobil 10.000"
+                                Parkir : Tersedia parkir yang luas dengan biaya parkir motor : 5.000 dan mobil
+                                10.000"
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
 
         <!-- Footer -->
         <footer class="footer py-4">
@@ -394,7 +517,45 @@ require 'db.php';
         </button>
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="script.js"></script>
-</body>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const openModalButtons = document.querySelectorAll('.open-modal-btn');
+                const modalTitle = document.querySelector('#facilityModalLabel');
+                const modalImage = document.querySelector('.modal-image');
+                const modalDescription = document.querySelector('.modal-description');
+
+                openModalButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const facilityId = button.getAttribute('data-id'); // Ambil ID fasilitas yang diklik
+                        const title = button.getAttribute('data-title');
+                        const image = button.getAttribute('data-image');
+                        const description = button.getAttribute('data-description');
+
+                        // Update modal content sementara dengan data yang sudah ada
+                        modalTitle.textContent = title;
+                        modalImage.src = image;
+                        modalDescription.textContent = description;
+
+                        // Gunakan AJAX untuk mengambil data lebih lengkap jika diperlukan
+                        fetch(`getFacilityDetails.php?id=${facilityId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data) {
+                                    modalTitle.textContent = data.title;
+                                    modalImage.src = data.image;
+                                    modalDescription.textContent = data.description;
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('Terjadi kesalahan saat memuat data.');
+                            });
+                    });
+                });
+            });
+
+
+        </script>
+
 
 </html>

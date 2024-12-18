@@ -84,16 +84,16 @@ header("Pragma: no-cache");
                 <h4>Wisata Air Panas Wong Pulungan</h4>
             </div>
             <a href="edittentangkami.php">
-                <i class="bi bi-pencil"></i> Edit Isi Tulisan Tentang Kami
+                <i class=""></i> Tentang Kami
             </a>
             <a href="edithargamasuk.php">
-                <i class="bi bi-currency-dollar"></i> Edit Harga Masuk
+                <i class=""></i> Harga Masuk
             </a>
             <a href="keloladatafasilitas.php">
-                <i class="bi bi-building"></i> Kelola Data Fasilitas
+                <i class=""></i> Kelola Data Fasilitas
             </a>
             <a href="kelolafotoairpanaswongpulungan.php">
-                <i class="bi bi-images"></i> Kelola Foto Air Panas Wong Pulungan
+                <i class=""></i> Kelola Galeri
             </a>
             <a href="#" onclick="confirmLogout()">
                 <i class="bi bi-box-arrow-right"></i> Keluar
@@ -113,7 +113,7 @@ header("Pragma: no-cache");
                         <!-- About Section -->
                         <div id="about-section" class="card mb-4">
                             <div class="card-header bg-success text-white">
-                                Edit Isi Tulisan Tentang Kami
+                                Edit Tentang Kami
                             </div>
                             <div class="card-body">
                                 <?php include 'db.php'; ?>
@@ -148,29 +148,115 @@ header("Pragma: no-cache");
                                     <button type="submit" class="btn btn-success" name="update_about" id="save_button"
                                         disabled>Simpan</button>
                                 </form>
+
                             </div>
                         </div>
                         <!-- End of About Section -->
+
+                        <!-- Foto Section -->
+                        <div id="foto-section" class="card mb-4">
+                            <div class="card-header bg-success text-white">
+                                Kelola Foto
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-hover mt-4">
+                                    <a href="../admin/tambahfotosection.php" class="btn btn-primary mb-3">Tambah
+                                        Foto</a>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Gambar</th>
+                                            <th scope="col">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $sql = "SELECT * FROM foto_section";
+                                        $result = mysqli_query($conn, $sql);
+
+                                        if ($result && mysqli_num_rows($result) > 0) {
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                // Path gambar di folder admin/uploads/
+                                                $gambarPath = 'uploads/' . $row['image'];
+
+                                                // Cek apakah file gambar tersedia
+                                                if (!empty($row['image']) && file_exists($gambarPath)) {
+                                                    $gambar = $gambarPath; // Path gambar valid
+                                                } else {
+                                                    $gambar = 'uploads/default.jpg'; // Gambar default jika tidak ada
+                                                }
+
+                                                echo "<tr>";
+                                                echo "<td><img src='$gambar' alt='" . htmlspecialchars($row['image']) . "' class='img-thumbnail' width='100'></td>";
+                                                echo "<td>
+                                                        <a href='edittentangkami.php?delete_foto_id={$row['id']}' class='btn btn-outline-danger btn-sm' onclick='return confirmDelete()'>
+                                                            <i class='bi bi-trash'></i>
+                                                        </a>
+                                                      </td>";
+                                                echo "</tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='2'>Tidak ada gambar.</td></tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- End of Foto Section -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Delete Foto Item -->
+    <?php
+    if (isset($_GET['delete_foto_id'])) {
+        $id = $_GET['delete_foto_id'];
+
+        // Sanitasi ID untuk mencegah SQL Injection
+        $id = intval($id);
+
+        // Cek apakah ID valid
+        if ($id > 0) {
+            // Hapus file gambar fisik di folder admin/uploads/
+            $query = "SELECT image FROM foto_section WHERE id = $id";
+            $result = mysqli_query($conn, $query);
+
+            if ($result && $row = mysqli_fetch_assoc($result)) {
+                $imagePath = 'uploads/' . $row['image'];
+                if (file_exists($imagePath)) {
+                    unlink($imagePath); // Hapus file gambar
+                }
+            }
+
+            // Hapus data dari database
+            $sql = "DELETE FROM foto_section WHERE id = $id";
+            if (mysqli_query($conn, $sql)) {
+                echo "<script>alert('Data berhasil dihapus!'); window.location.href = 'edittentangkami.php';</script>";
+                exit();
+            } else {
+                echo "<script>alert('Gagal menghapus data'); window.history.back();</script>";
+                exit();
+            }
+        } else {
+            echo "<script>alert('ID tidak valid!'); window.history.back();</script>";
+            exit();
+        }
+    }
+    ?>
+
     <!-- Bootstrap JS (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('edit_button').addEventListener('click', function () {
-            document.getElementById('about_text').disabled = false;
-            document.getElementById('save_button').disabled = false;
-            this.disabled = true;
-        });
-    </script>
     <script>
         function confirmLogout() {
             if (confirm("Apakah Anda yakin ingin keluar?")) {
                 window.location.href = 'login.php';
             }
+        }
+
+        function confirmDelete() {
+            return confirm('Apakah Anda yakin ingin menghapus data ini?');
         }
     </script>
 </body>

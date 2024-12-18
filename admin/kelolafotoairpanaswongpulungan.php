@@ -84,16 +84,16 @@ header("Pragma: no-cache");
                 <h4>Wisata Air Panas Wong Pulungan</h4>
             </div>
             <a href="edittentangkami.php">
-                <i class="bi bi-pencil"></i> Edit Isi Tulisan Tentang Kami
+                <i class=""></i> Tentang Kami
             </a>
             <a href="edithargamasuk.php">
-                <i class="bi bi-currency-dollar"></i> Edit Harga Masuk
+                <i class=""></i> Harga Masuk
             </a>
             <a href="keloladatafasilitas.php">
-                <i class="bi bi-building"></i> Kelola Data Fasilitas
+                <i class=""></i> Kelola Data Fasilitas
             </a>
             <a href="kelolafotoairpanaswongpulungan.php">
-                <i class="bi bi-images"></i> Kelola Foto Air Panas Wong Pulungan
+                <i class=""></i> Kelola Galeri
             </a>
             <a href="#" onclick="confirmLogout()">
                 <i class="bi bi-box-arrow-right"></i> Keluar
@@ -114,7 +114,7 @@ header("Pragma: no-cache");
                         <!-- Manage Gallery Section -->
                         <div id="gallery-section" class="card mb-4">
                             <div class="card-header bg-success text-white">
-                                Kelola Foto Air Panas Wong Pulungan
+                                Kelola Galeri Air Panas Wong Pulungan
                             </div>
                             <div class="card-body">
                                 <a href="tambahfoto.php" class="btn btn-primary mb-3">Tambah Gambar</a>
@@ -162,62 +162,90 @@ header("Pragma: no-cache");
                             </div>
                         </div>
                         <!-- End of Manage Gallery Section -->
+
+                        <!-- Manage Video Section -->
+                        <div id="video-section" class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                Kelola Video Air Panas Wong Pulungan
+                            </div>
+                            <div class="card-body">
+                                <a href="tambahvideogaleri.php" class="btn btn-primary mb-3">Tambah Video</a>
+                                <!-- Display Video Items -->
+                                <div class="row">
+                                    <?php
+                                    $sql = "SELECT * FROM videogallery_section";
+                                    $result = mysqli_query($conn, $sql);
+
+                                    if ($result && mysqli_num_rows($result) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result)) {
+                                            // Path video di folder admin/uploads/
+                                            $videoURL = $row['video'];
+
+                                            echo "<div class='col-md-4 mb-3'>";
+                                            echo "<div class='card'>";
+                                            echo "<div class='card-body'>";
+                                            echo "<iframe width='100%' height='200' src='$videoURL' frameborder='0' allowfullscreen></iframe>";
+                                            echo "<a href='kelolafotoairpanaswongpulungan.php?delete_video_id={$row['id']}' class='btn btn-outline-danger btn-sm mt-2' onclick='return confirmDelete()'>
+                                                    <i class='bi bi-trash'></i> Hapus
+                                                  </a>";
+                                            echo "</div>";
+                                            echo "</div>";
+                                            echo "</div>";
+                                        }
+                                    } else {
+                                        echo "<div class='col-12'><p>Tidak ada video.</p></div>";
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of Manage Video Section -->
+
+                        <!-- Delete Video Item -->
+                        <?php
+                        if (isset($_GET['delete_video_id'])) {
+                            $id = $_GET['delete_video_id'];
+
+                            // Sanitasi ID untuk mencegah SQL Injection
+                            $id = intval($id);
+
+                            // Cek apakah ID valid
+                            if ($id > 0) {
+                                // Hapus data dari database
+                                $sql = "DELETE FROM videogallery_section WHERE id = $id";
+                                if (mysqli_query($conn, $sql)) {
+                                    echo "<script>alert('Data berhasil dihapus!'); window.location.href = 'kelolafotoairpanaswongpulungan.php';</script>";
+                                    exit();
+                                } else {
+                                    echo "<script>alert('Gagal menghapus data'); window.history.back();</script>";
+                                    exit();
+                                }
+                            } else {
+                                echo "<script>alert('ID tidak valid!'); window.history.back();</script>";
+                                exit();
+                            }
+                        }
+                        ?>
+
+                        <!-- Bootstrap JS (optional) -->
+                        <script
+                            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                        <script>
+                            function confirmLogout() {
+                                if (confirm("Apakah Anda yakin ingin keluar?")) {
+                                    window.location.href = 'login.php';
+                                }
+                            }
+
+                            function confirmDelete() {
+                                return confirm('Apakah Anda yakin ingin menghapus data ini?');
+                            }
+                        </script>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Delete Gallery Item -->
-    <?php
-    if (isset($_GET['delete_gallery_id'])) {
-        $id = $_GET['delete_gallery_id'];
-
-        // Sanitasi ID untuk mencegah SQL Injection
-        $id = intval($id);
-
-        // Cek apakah ID valid
-        if ($id > 0) {
-            // Hapus file gambar fisik di folder admin/uploads/
-            $query = "SELECT image FROM gallery_section WHERE id = $id";
-            $result = mysqli_query($conn, $query);
-
-            if ($result && $row = mysqli_fetch_assoc($result)) {
-                $imagePath = 'uploads/' . $row['image'];
-                if (file_exists($imagePath)) {
-                    unlink($imagePath); // Hapus file gambar
-                }
-            }
-
-            // Hapus data dari database
-            $sql = "DELETE FROM gallery_section WHERE id = $id";
-            if (mysqli_query($conn, $sql)) {
-                echo "<script>alert('Data berhasil dihapus!'); window.location.href = 'kelolafotoairpanaswongpulungan.php';</script>";
-                exit();
-            } else {
-                echo "<script>alert('Gagal menghapus data'); window.history.back();</script>";
-                exit();
-            }
-        } else {
-            echo "<script>alert('ID tidak valid!'); window.history.back();</script>";
-            exit();
-        }
-    }
-    ?>
-
-    <!-- Bootstrap JS (optional) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function confirmLogout() {
-            if (confirm("Apakah Anda yakin ingin keluar?")) {
-                window.location.href = 'login.php';
-            }
-        }
-
-        function confirmDelete() {
-            return confirm('Apakah Anda yakin ingin menghapus data ini?');
-        }
-    </script>
 </body>
 
 </html>

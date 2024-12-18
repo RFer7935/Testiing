@@ -118,16 +118,16 @@ if (isset($_GET['delete_facility_id'])) {
                 <h4>Wisata Air Panas Wong Pulungan</h4>
             </div>
             <a href="edittentangkami.php">
-                <i class="bi bi-pencil"></i> Edit Isi Tulisan Tentang Kami
+                <i class=""></i> Tentang Kami
             </a>
             <a href="edithargamasuk.php">
-                <i class="bi bi-currency-dollar"></i> Edit Harga Masuk
+                <i class=""></i> Harga Masuk
             </a>
             <a href="keloladatafasilitas.php">
-                <i class="bi bi-building"></i> Kelola Data Fasilitas
+                <i class=""></i> Kelola Data Fasilitas
             </a>
             <a href="kelolafotoairpanaswongpulungan.php">
-                <i class="bi bi-images"></i> Kelola Foto Air Panas Wong Pulungan
+                <i class=""></i> Kelola Galeri
             </a>
             <a href="#" onclick="confirmLogout()">
                 <i class="bi bi-box-arrow-right"></i> Keluar
