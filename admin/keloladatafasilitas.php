@@ -15,23 +15,38 @@ if (isset($_GET['delete_facility_id'])) {
     $id = $_GET['delete_facility_id'];
 
     // Ambil nama file gambar dari database sebelum menghapus data
-    $sql = "SELECT image FROM facility_section WHERE id = $id";
+    $sql = "SELECT title, image FROM facility_section WHERE id = $id";
     $result = mysqli_query($conn, $sql);
 
     if ($result->num_rows > 0) {
         // Ambil data gambar
         $row = mysqli_fetch_assoc($result);
         $imagePath = 'uploads/' . $row['image']; // Path gambar
+        $facility_title = $row['title'];
 
         // Hapus gambar dari folder uploads
         if (file_exists($imagePath)) {
             unlink($imagePath); // Menghapus gambar dari folder
         }
 
-        // Setelah gambar dihapus, hapus data fasilitas dari database
+        // Hapus data fasilitas dari database
         $sql = "DELETE FROM facility_section WHERE id = $id";
 
         if (mysqli_query($conn, $sql)) {
+            // Hapus data detail fasilitas yang terkait
+            $sql_detail = "SELECT image FROM detailfacility_section WHERE title = '$facility_title'";
+            $result_detail = mysqli_query($conn, $sql_detail);
+
+            while ($row_detail = mysqli_fetch_assoc($result_detail)) {
+                $detailImagePath = 'uploads/' . $row_detail['image'];
+                if (file_exists($detailImagePath)) {
+                    unlink($detailImagePath); // Menghapus gambar detail dari folder
+                }
+            }
+
+            $sql = "DELETE FROM detailfacility_section WHERE title = '$facility_title'";
+            mysqli_query($conn, $sql);
+
             echo "<script>alert('Data dan gambar berhasil dihapus!'); window.location.href = 'keloladatafasilitas.php';</script>";
             exit();
         } else {
@@ -189,6 +204,42 @@ if (isset($_GET['delete_facility_id'])) {
                             </div>
                         </div>
                         <!-- End of Manage Facility Section -->
+
+                        <!-- Manage Facility Detail Section -->
+                        <div id="facility-detail-section" class="card mb-4">
+                            <div class="card-header bg-info text-white">
+                                Data Detail Fasilitas
+                            </div>
+                            <div class="card-body">
+                                <!-- Display Facility Details -->
+                                <table class="table table-hover mt-4">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Judul</th>
+                                            <th scope="col">Gambar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $sql = "SELECT * FROM detailfacility_section";
+                                        $result = mysqli_query($conn, $sql);
+
+                                        if ($result->num_rows > 0) {
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                echo "<tr>";
+                                                echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+                                                echo "<td><img src='uploads/" . htmlspecialchars($row['image']) . "' width='100'></td>";
+                                                echo "</tr>";
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='3'>Tidak ada Detail Fasilitas</td></tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- End of Manage Facility Detail Section -->
                     </div>
                 </div>
             </div>

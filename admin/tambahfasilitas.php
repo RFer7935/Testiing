@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-    header("Location: .../admin/login.php");
+    header("Location: ../admin/login.php");
     exit();
 }
 // Prevent caching
@@ -31,6 +31,7 @@ include 'db.php';
             $facility_title = mysqli_real_escape_string($conn, $_POST['facility_title']);
             $facility_description = mysqli_real_escape_string($conn, $_POST['facility_description']);
             $facility_image = $_FILES['facility_image']['name'];
+            $detail_facility_image = $_FILES['detail_facility_image']['name'];
 
             // Menentukan folder target
             $target_dir = "uploads/";
@@ -42,14 +43,18 @@ include 'db.php';
 
             // Path lengkap file
             $target_file = $target_dir . basename($facility_image);
+            $target_detail_file = $target_dir . basename($detail_facility_image);
 
             // Upload file ke folder target
-            if (move_uploaded_file($_FILES['facility_image']['tmp_name'], $target_file)) {
+            if (move_uploaded_file($_FILES['facility_image']['tmp_name'], $target_file) && move_uploaded_file($_FILES['detail_facility_image']['tmp_name'], $target_detail_file)) {
                 // Insert data ke database
                 $sql = "INSERT INTO facility_section (title, description, image) 
                         VALUES ('$facility_title', '$facility_description', '$facility_image')";
 
-                if (mysqli_query($conn, $sql)) {
+                $sql_detail = "INSERT INTO detailfacility_section (title, image) 
+                        VALUES ('$facility_title', '$detail_facility_image')";
+
+                if (mysqli_query($conn, $sql) && mysqli_query($conn, $sql_detail)) {
                     echo "<div class='alert alert-success'>Data berhasil ditambahkan!</div>";
                     echo "<script>
                             setTimeout(function() {
@@ -79,6 +84,11 @@ include 'db.php';
                 <label for="facility_image" class="form-label">Gambar:</label>
                 <input type="file" class="form-control" id="facility_image" name="facility_image" accept="image/*"
                     required>
+            </div>
+            <div class="mb-3">
+                <label for="detail_facility_image" class="form-label">Gambar Detail Fasilitas:</label>
+                <input type="file" class="form-control" id="detail_facility_image" name="detail_facility_image"
+                    accept="image/*" required>
             </div>
             <button type="submit" class="btn btn-success" name="submit_facility">Simpan</button>
             <a href="keloladatafasilitas.php" class="btn btn-secondary">Kembali</a>

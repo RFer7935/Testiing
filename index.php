@@ -130,7 +130,7 @@ require 'db.php';
                 <h1 class="company-name display-4">Wisata Air Panas Wong Pulungan</h1>
                 <h2 class="deskripsion1 lead">Nikmati sensasi air panas yang dilengkapi</h2>
                 <h2 class="deskripsion1 lead">dengan pemandangan Gunung Penanggungan </h2>
-                <h2 class="deskripsion1 lead">yang terletak di Gempol, Pasuruan, Jawa Timur </h2>
+                <h2 class="deskripsion1 lead">berlokasi di Gempol, Pasuruan, Jawa Timur </h2>
                 <a href="#Tentang_Kami" class="btn btn-primary btn-lg mt-3">Lihat Selengkapnya</a>
             </div>
         </div>
@@ -192,6 +192,18 @@ require 'db.php';
             </div>
         </section>
 
+        <!-- Location Section -->
+        <section id="lokasi" class="content-section lokasi-section">
+            <div class="container fade-transition delay-2">
+                <h2>Lokasi Kami</h2>
+                <div class="map-wrapper slide-transition">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.4533799736785!2d112.68418991477892!3d-7.624214894509843!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7d906e38b0e2f%3A0x6e5df0bd5a47efa7!2sPemandian%20Air%20Panas%20Kepulungan!5e0!3m2!1sid!2sid!4v1700486115831!5m2!1sid!2sid"
+                        width="100%" height="400" allowfullscreen="" loading="lazy" class="rounded map-frame"></iframe>
+                </div>
+            </div>
+        </section>
+
         <!-- Pricing Section -->
         <?php
         $sql = "SELECT * FROM pricing_section WHERE id = 1";
@@ -208,7 +220,6 @@ require 'db.php';
             </div>
         </section>
 
-        <!-- Facilities Section -->
         <section id="Fasilitas" class="content-section py-5">
             <div class="container fade-transition delay-2">
                 <h1 class="event text-center">DESTINASI LAINNYA DALAM</h1>
@@ -221,8 +232,14 @@ require 'db.php';
 
                     if ($result && mysqli_num_rows($result) > 0) {
                         while ($facility = mysqli_fetch_assoc($result)) {
-                            $imagePath = 'admin/uploads/' . $facility['image'];
-                            $src = (!empty($facility['image']) && file_exists($imagePath)) ? $imagePath : 'admin/uploads/default-image.jpg';
+                            // Path gambar dari tabel facility_section
+                            $imageSrc = 'admin/uploads/' . (!empty($facility['image']) ? $facility['image'] : 'default-image.jpg');
+
+                            // Query untuk mengambil gambar dari tabel detailfacility_section berdasarkan title
+                            $sql_detail = "SELECT image FROM detailfacility_section WHERE title = '" . $facility['title'] . "'";
+                            $result_detail = mysqli_query($conn, $sql_detail);
+                            $detail = mysqli_fetch_assoc($result_detail);
+                            $modalImageSrc = 'admin/uploads/' . ($detail ? $detail['image'] : 'default-image.jpg');
 
                             // Ambil hanya 5 kata pertama dari description
                             $descriptionWords = explode(" ", $facility['description']);
@@ -230,7 +247,7 @@ require 'db.php';
                             ?>
                             <div class="col-md-3 mb-4">
                                 <div class="card h-100 text-center">
-                                    <img src="<?php echo $src; ?>" class="card-img-top"
+                                    <img src="<?php echo $imageSrc; ?>" class="card-img-top"
                                         alt="<?php echo htmlspecialchars($facility['title']); ?>">
                                     <div class="card-body">
                                         <h3><?php echo htmlspecialchars($facility['title']); ?></h3>
@@ -239,7 +256,7 @@ require 'db.php';
                                         <button type="button" class="btn btn-primary open-modal-btn" data-bs-toggle="modal"
                                             data-bs-target="#facilityModal" data-id="<?php echo $facility['id']; ?>"
                                             data-title="<?php echo htmlspecialchars($facility['title']); ?>"
-                                            data-image="<?php echo $src; ?>"
+                                            data-image="<?php echo $modalImageSrc; ?>"
                                             data-description="<?php echo htmlspecialchars($facility['description']); ?>">
                                             Lihat Selengkapnya
                                         </button>
@@ -355,18 +372,6 @@ require 'db.php';
                         <img src="img/Iphone.png" alt="Aplikasi pada handphone"
                             class="img-fluid phone-image custom-size">
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Location Section -->
-        <section id="lokasi" class="content-section lokasi-section">
-            <div class="container fade-transition delay-2">
-                <h2>Lokasi Kami</h2>
-                <div class="map-wrapper slide-transition">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.4533799736785!2d112.68418991477892!3d-7.624214894509843!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7d906e38b0e2f%3A0x6e5df0bd5a47efa7!2sPemandian%20Air%20Panas%20Kepulungan!5e0!3m2!1sid!2sid!4v1700486115831!5m2!1sid!2sid"
-                        width="100%" height="400" allowfullscreen="" loading="lazy" class="rounded map-frame"></iframe>
                 </div>
             </div>
         </section>
@@ -518,7 +523,7 @@ require 'db.php';
         <!-- Scripts -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', function () {
                 const openModalButtons = document.querySelectorAll('.open-modal-btn');
                 const modalTitle = document.querySelector('#facilityModalLabel');
                 const modalImage = document.querySelector('.modal-image');
@@ -552,10 +557,23 @@ require 'db.php';
                             });
                     });
                 });
+
+                var modal = document.getElementById('facilityModal');
+                modal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var title = button.getAttribute('data-title');
+                    var image = button.getAttribute('data-image');
+                    var description = button.getAttribute('data-description');
+
+                    var modalTitle = modal.querySelector('.modal-title');
+                    var modalImage = modal.querySelector('.modal-image');
+                    var modalDescription = modal.querySelector('.modal-description');
+
+                    modalTitle.textContent = title;
+                    modalImage.src = image;
+                    modalDescription.textContent = description;
+                });
             });
-
-
         </script>
-
 
 </html>

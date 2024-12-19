@@ -12,9 +12,16 @@ if ($facilityId > 0) {
 
     if ($result && mysqli_num_rows($result) > 0) {
         $facility = mysqli_fetch_assoc($result);
+
+        // Ambil gambar dari tabel detailfacility_section berdasarkan title
+        $sql_detail = "SELECT image FROM detailfacility_section WHERE title = '" . $facility['title'] . "'";
+        $result_detail = mysqli_query($conn, $sql_detail);
+        $detail = mysqli_fetch_assoc($result_detail);
+        $imageSrc = 'admin/uploads/' . ($detail ? $detail['image'] : 'default-image.jpg');
+
         $response = [
             'title' => htmlspecialchars($facility['title']),
-            'image' => 'admin/uploads/' . $facility['image'], // Pastikan path gambar benar
+            'image' => $imageSrc, // Gambar dari tabel detailfacility_section
             'description' => htmlspecialchars($facility['description']),
         ];
         echo json_encode($response);

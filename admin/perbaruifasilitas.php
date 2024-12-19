@@ -30,6 +30,10 @@ include 'db.php';
             $sql = "SELECT * FROM facility_section WHERE id = $id";
             $result = mysqli_query($conn, $sql);
             $facility_data = mysqli_fetch_assoc($result);
+
+            $sql_detail = "SELECT * FROM detailfacility_section WHERE title = '" . $facility_data['title'] . "'";
+            $result_detail = mysqli_query($conn, $sql_detail);
+            $detailfacility_data = mysqli_fetch_assoc($result_detail);
         }
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_facility'])) {
@@ -41,7 +45,7 @@ include 'db.php';
                     WHERE id = $id";
 
             if (mysqli_query($conn, $sql)) {
-                // Check if a new image is uploaded
+                // Check if a new image is uploaded for facility
                 if (!empty($_FILES['facility_image']['name'])) {
                     $facility_image = $_FILES['facility_image']['name'];
                     $target_dir = "uploads/";
@@ -53,6 +57,25 @@ include 'db.php';
                         mysqli_query($conn, $sql);
                     }
                 }
+
+                // Update detail facility
+                $sql_detail = "UPDATE detailfacility_section 
+                               SET title = '$facility_title' 
+                               WHERE title = '" . $facility_data['title'] . "'";
+                mysqli_query($conn, $sql_detail);
+
+                // Check if a new image is uploaded for detail facility
+                if (!empty($_FILES['detailfacility_image']['name'])) {
+                    $detailfacility_image = $_FILES['detailfacility_image']['name'];
+                    $target_file_detail = $target_dir . basename($detailfacility_image);
+
+                    // Upload file and update the image path in the database
+                    if (move_uploaded_file($_FILES['detailfacility_image']['tmp_name'], $target_file_detail)) {
+                        $sql_detail_image = "UPDATE detailfacility_section SET image = '$detailfacility_image' WHERE title = '$facility_title'";
+                        mysqli_query($conn, $sql_detail_image);
+                    }
+                }
+
                 echo "<div class='alert alert-success'>Data berhasil diupdate!</div>";
                 echo "<script>
                         setTimeout(function() {
@@ -80,6 +103,10 @@ include 'db.php';
                 <div class="mb-3">
                     <label for="facility_image" class="form-label">Gambar:</label>
                     <input type="file" class="form-control" id="facility_image" name="facility_image">
+                </div>
+                <div class="mb-3">
+                    <label for="detailfacility_image" class="form-label">Gambar Detail Fasilitas:</label>
+                    <input type="file" class="form-control" id="detailfacility_image" name="detailfacility_image">
                 </div>
                 <button type="submit" class="btn btn-success" name="update_facility">Update</button>
                 <a href="keloladatafasilitas.php" class="btn btn-secondary">Kembali</a>

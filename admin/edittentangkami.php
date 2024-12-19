@@ -258,6 +258,11 @@ header("Pragma: no-cache");
         function confirmDelete() {
             return confirm('Apakah Anda yakin ingin menghapus data ini?');
         }
+        document.getElementById('edit_button').addEventListener('click', function () {
+            document.getElementById('about_text').disabled = false;
+            document.getElementById('save_button').disabled = false;
+            this.disabled = true;
+        });
     </script>
 </body>
 
